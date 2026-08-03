@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="krypticdev.Tests/krypticdev.Tests.csproj" />
+  <Project Path="krypticdev/krypticdev.csproj" />
+</Solution>

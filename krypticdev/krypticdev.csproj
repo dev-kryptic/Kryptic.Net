@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <!-- netstandard2.0 covers .NET Framework 4.6.2+ and .NET Core 2.0+ (legacy);
+             net6.0/net8.0 builds use the in-box System.Text.Json and unix sockets. -->
+        <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>krypticdev</PackageId>
+        <Version>0.2.0-rc</Version>
+        <Authors>Kryptic</Authors>
+        <Description>Kryptic .NET SDK — passively injects development secrets from the Kryptic daemon into IConfiguration and environment variables. No-op outside Development.</Description>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <PackageProjectUrl>https://kryptic.dev</PackageProjectUrl>
+    </PropertyGroup>
+
+    <!-- Lowest workable dependency per target so legacy apps are never forced to upgrade. -->
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+        <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+    </ItemGroup>
+
+</Project>
