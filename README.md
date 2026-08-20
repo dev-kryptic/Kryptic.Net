@@ -1,9 +1,9 @@
-# krypticdev (.NET SDK)
+# Kryptic.Daemon.Client (.NET)
 
-The Kryptic .NET SDK. One line wires the whole integration:
+The Kryptic daemon client for .NET. One line wires the whole integration:
 
 ```csharp
-using KrypticDev;
+using Kryptic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +16,13 @@ When the environment is `Development` (`ASPNETCORE_ENVIRONMENT` or `DOTNET_ENVIR
 `AddKryptic()` finds `kryptic.json`, fetches the project's secrets from the local Kryptic
 daemon, and exposes them through `IConfiguration`, `IOptions<T>` and
 `Environment.GetEnvironmentVariable()`. In any other environment it is a no-op, and it
-never throws — no daemon just means your app starts with the configuration it already has.
+never throws - no daemon just means your app starts with the configuration it already has.
 
 ```bash
-dotnet add package krypticdev
+dotnet add package Kryptic.Daemon.Client
 ```
 
-Targets `netstandard2.0`, `net6.0` and `net8.0` — usable from .NET Framework 4.6.2+
+Targets `netstandard2.0`, `net6.0` and `net8.0` - usable from .NET Framework 4.6.2+
 and every .NET Core / .NET version, with the lowest workable
 `Microsoft.Extensions.Configuration` dependency per target so legacy apps are never
 forced to upgrade their configuration stack.

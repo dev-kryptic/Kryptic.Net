@@ -9,10 +9,11 @@
         <Nullable>enable</Nullable>
 
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageId>krypticdev</PackageId>
+        <PackageId>Kryptic.Daemon.Client</PackageId>
+        <RootNamespace>Kryptic</RootNamespace>
         <Version>0.2.0-rc</Version>
-        <Authors>Kryptic</Authors>
-        <Description>Kryptic .NET SDK — passively injects development secrets from the Kryptic daemon into IConfiguration and environment variables. No-op outside Development.</Description>
+        <Authors>Kryptic by Theka.dev SINGLE MEMBER P.C.</Authors>
+        <Description>Kryptic daemon client for .NET. Passively injects development secrets from the local Kryptic daemon into IConfiguration and environment variables. No-op outside Development.</Description>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://kryptic.dev</PackageProjectUrl>
     </PropertyGroup>

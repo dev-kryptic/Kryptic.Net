@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 
-namespace KrypticDev;
+namespace Kryptic;
 
 /// <summary>
 /// Talks daemon/PROTOCOL.md v1: one newline-delimited JSON request, one response,

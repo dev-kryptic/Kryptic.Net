@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
-namespace KrypticDev;
+namespace Kryptic;
 
 public class KrypticConfigurationSource(KrypticOptions options) : IConfigurationSource
 {
@@ -15,7 +15,7 @@ public class KrypticConfigurationSource(KrypticOptions options) : IConfiguration
 /// The configuration provider behind <c>AddKryptic()</c>. In Development it fetches the
 /// project's secrets from the daemon and exposes them via IConfiguration; it also sets
 /// process environment variables (without overwriting existing ones) so
-/// <c>Environment.GetEnvironmentVariable</c> works too. Never throws — problems degrade
+/// <c>Environment.GetEnvironmentVariable</c> works too. Never throws, problems degrade
 /// to a single console warning (rule 1 of daemon/PROTOCOL.md).
 /// </summary>
 public class KrypticConfigurationProvider(KrypticOptions options) : ConfigurationProvider
@@ -32,7 +32,7 @@ public class KrypticConfigurationProvider(KrypticOptions options) : Configuratio
             ?? config?.ProjectId;
         if (string.IsNullOrEmpty(projectId))
         {
-            Warn("no kryptic.json found (and no KRYPTIC_PROJECT_ID set) — nothing to inject.");
+            Warn("no kryptic.json found (and no KRYPTIC_PROJECT_ID set), nothing to inject.");
             return;
         }
 
@@ -53,7 +53,7 @@ public class KrypticConfigurationProvider(KrypticOptions options) : Configuratio
         }
         catch (Exception e)
         {
-            Warn($"daemon not reachable ({e.Message}) — continuing without injected secrets.");
+            Warn($"daemon not reachable ({e.Message}), continuing without injected secrets.");
             return;
         }
 
@@ -109,7 +109,7 @@ public class KrypticConfigurationProvider(KrypticOptions options) : Configuratio
                     }
                     catch (JsonException)
                     {
-                        Warn($"could not parse {candidate} — ignoring it.");
+                        Warn($"could not parse {candidate}, ignoring it.");
                         return null;
                     }
                 }

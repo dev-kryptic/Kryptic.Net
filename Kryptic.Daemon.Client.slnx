@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Kryptic.Daemon.Client.Tests/Kryptic.Daemon.Client.Tests.csproj" />
+  <Project Path="Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj" />
+</Solution>

@@ -1,11 +1,11 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
-using KrypticDev;
+using Kryptic;
 using Microsoft.Extensions.Configuration;
 using Xunit;
 
-namespace KrypticDev.Tests;
+namespace Kryptic.Tests;
 
 /// <summary>
 /// Tests run against a mock daemon: a unix-socket listener speaking PROTOCOL.md v1.

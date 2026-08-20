@@ -1,4 +1,4 @@
-namespace KrypticDev;
+namespace Kryptic;
 
 /// <summary>
 /// Options for <c>AddKryptic()</c>. Environment variables always take precedence:
