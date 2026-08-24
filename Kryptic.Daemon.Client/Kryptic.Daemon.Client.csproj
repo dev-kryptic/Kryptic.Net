@@ -11,12 +11,22 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Kryptic.Daemon.Client</PackageId>
         <RootNamespace>Kryptic</RootNamespace>
-        <Version>0.2.0-rc</Version>
+        <Version>0.1.0</Version>
         <Authors>Kryptic by Theka.dev SINGLE MEMBER P.C.</Authors>
+        <Copyright>Copyright (c) 2026 Kryptic by Theka.dev SINGLE MEMBER P.C.</Copyright>
         <Description>Kryptic daemon client for .NET. Passively injects development secrets from the local Kryptic daemon into IConfiguration and environment variables. No-op outside Development.</Description>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://kryptic.dev</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/dev-kryptic/Kryptic.Net</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>kryptic;secrets;configuration;daemon</PackageTags>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\LICENSE" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
     <!-- Lowest workable dependency per target so legacy apps are never forced to upgrade. -->
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
