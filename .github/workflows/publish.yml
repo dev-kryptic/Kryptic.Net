@@ -28,10 +28,20 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
 
       - name: Restore
         run: dotnet restore Kryptic.Daemon.Client.slnx
+
+      - name: Build all target frameworks
+        run: >
+          dotnet build Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj
+          --configuration Release
+          --no-restore
+          -p:GeneratePackageOnBuild=false
 
       - name: Test
         run: dotnet test Kryptic.Daemon.Client.slnx --configuration Release --no-restore
@@ -51,7 +61,10 @@ jobs:
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            10.0.x
 
       - name: Resolve package version
         id: version
@@ -78,12 +91,20 @@ jobs:
         run: |
           set -euo pipefail
           dotnet restore Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj
-          dotnet pack Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj \
+          dotnet build Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj \
             --configuration Release \
             --no-restore \
+            -p:Version="${VERSION}" \
+            -p:PackageVersion="${VERSION}" \
+            -p:GeneratePackageOnBuild=false \
+            -p:ContinuousIntegrationBuild=true
+          dotnet pack Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj \
+            --configuration Release \
+            --no-build \
             --output ./nupkg \
             -p:Version="${VERSION}" \
             -p:PackageVersion="${VERSION}" \
+            -p:GeneratePackageOnBuild=false \
             -p:ContinuousIntegrationBuild=true
 
       - name: NuGet login
