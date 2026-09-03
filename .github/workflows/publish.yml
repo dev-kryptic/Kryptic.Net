@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
     branches: [main]
-    tags:
-      - 'v*.*.*'
   workflow_dispatch:
     inputs:
       version:
@@ -50,14 +48,25 @@ jobs:
     needs: test
     if: >
       github.actor != 'github-actions[bot]' &&
+      github.actor != 'kryptic-release-bot[bot]' &&
       (github.event_name == 'workflow_dispatch' ||
-       (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))))
+       (github.event_name == 'push' && github.ref == 'refs/heads/main'))
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
     steps:
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
 
       - uses: actions/setup-dotnet@v4
         with:
@@ -70,20 +79,53 @@ jobs:
         id: version
         env:
           EVENT_NAME: ${{ github.event_name }}
-          TAG_NAME: ${{ github.ref_name }}
           INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           set -euo pipefail
+          INCOMING=""
           if [ "$EVENT_NAME" = "workflow_dispatch" ] && [ -n "${INPUT_VERSION:-}" ]; then
             INCOMING="$INPUT_VERSION"
-          elif [ "$EVENT_NAME" = "push" ] && [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
-            INCOMING="${TAG_NAME#v}"
-          else
-            INCOMING=""
           fi
           VERSION="$(python3 .github/scripts/resolve-package-version.py "${INCOMING}")"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Resolved package version: ${VERSION}"
+
+      - name: Set csproj version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, re
+          path = pathlib.Path("Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj")
+          version = os.environ["VERSION"]
+          text = path.read_text(encoding="utf-8")
+          updated, count = re.subn(
+              r"<Version>[^<]+</Version>",
+              f"<Version>{version}</Version>",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("Expected exactly one <Version> element in the csproj")
+          path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit version bump
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          APP_ID: ${{ secrets.RELEASE_BOT_APP_ID }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          set -euo pipefail
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${APP_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          if git diff --quiet -- Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj; then
+            echo "csproj already at ${VERSION}"
+            exit 0
+          fi
+          git add Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj
+          git commit -m "chore: release ${VERSION}"
+          git push
 
       - name: Pack
         env:
@@ -123,33 +165,26 @@ jobs:
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
 
-      - name: Commit version bump
-        if: github.ref == 'refs/heads/main'
+      - name: Tag and GitHub Release
         env:
           VERSION: ${{ steps.version.outputs.version }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_ID: ${{ secrets.RELEASE_BOT_APP_ID }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
           set -euo pipefail
-          python3 - <<'PY'
-          import os, pathlib, re
-          path = pathlib.Path("Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj")
-          version = os.environ["VERSION"]
-          text = path.read_text(encoding="utf-8")
-          updated, count = re.subn(
-              r"<Version>[^<]+</Version>",
-              f"<Version>{version}</Version>",
-              text,
-              count=1,
-          )
-          if count != 1:
-              raise SystemExit("Expected exactly one <Version> element in the csproj")
-          path.write_text(updated, encoding="utf-8")
-          PY
-          if git diff --quiet -- Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj; then
-            echo "csproj already at ${VERSION}"
-            exit 0
+          TAG="v${VERSION}"
+          git config user.name "${APP_SLUG}[bot]"
+          git config user.email "${APP_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          git fetch --tags --force
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists"
+          else
+            git tag -a "$TAG" -m "Release ${VERSION}"
+            git push origin "$TAG"
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Kryptic.Daemon.Client/Kryptic.Daemon.Client.csproj
-          git commit -m "chore: release ${VERSION}"
-          git push
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists"
+          else
+            gh release create "$TAG" --generate-notes --title "$(basename "$GITHUB_REPOSITORY") ${VERSION}"
+          fi
