@@ -1,31 +1,19 @@
 # Contributing
 
-Thanks for taking the time to improve this Kryptic language package.
-
-This repository is a thin daemon client. It talks to the local Kryptic daemon
-over the protocol in
-[Kryptic.Daemon PROTOCOL.md](https://github.com/dev-kryptic/Kryptic.Daemon/blob/main/PROTOCOL.md)
-and injects development secrets into the host process. Keep it that way: no
-network calls to Kryptic APIs, no extra frameworks, no custom crypto.
+This repository is the .NET daemon client for Kryptic (`Kryptic.Daemon.Client`).
 
 ## What we accept
 
-- Bug fixes in the inject / fetch path
-- Test coverage for existing behaviour
-- Compatibility fixes for supported runtimes
-- Documentation corrections in this README
-
-Open an issue first for larger changes (new configuration keys, protocol
-changes, production-mode behaviour). Protocol changes belong in
-[Kryptic.Daemon](https://github.com/dev-kryptic/Kryptic.Daemon) and must land
-in every language package together.
+- Bug fixes and test coverage
+- Documentation corrections
+- Compatibility fixes
 
 ## What we do not accept
 
-- Features that contact the Kryptic platform directly
-- Changes that throw or panic when the daemon is missing
-- Overwriting environment variables or properties that are already set
-- Security reports filed as public issues (email security@kryptic.dev)
+- Storing or logging secret values in plaintext
+- Breaking changes to the daemon IPC protocol without a coordinated Daemon release
+
+- Public GitHub issues for vulnerabilities (email security@kryptic.dev)
 
 ## Development
 
@@ -33,12 +21,19 @@ in every language package together.
 dotnet test
 ```
 
+Protocol details: [Kryptic.Daemon/PROTOCOL.md](https://github.com/dev-kryptic/Kryptic.Daemon/blob/main/PROTOCOL.md).
+
+## Releasing
+
+A merge to `main` is the release. The publish workflow commits the version bump as
+the Kryptic Release Bot, publishes to NuGet, tags `vX.Y.Z`, and opens a
+GitHub Release using the matching section in [CHANGELOG.md](CHANGELOG.md).
+
+Before merging release-worthy changes, move notes from **Unreleased** into a
+`## X.Y.Z` section so the release has a description.
+
 ## Licensing of contributions
 
 This repository is Apache-2.0. By opening a pull request you confirm the
 contribution is your own work (or you have the right to submit it) and you
 license it under Apache-2.0. There is no CLA.
-
-## Code of conduct
-
-See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
