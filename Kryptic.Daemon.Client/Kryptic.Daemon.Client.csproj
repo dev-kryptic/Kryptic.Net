@@ -11,7 +11,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Kryptic.Daemon.Client</PackageId>
         <RootNamespace>Kryptic</RootNamespace>
-        <Version>1.0.0</Version>
+        <Version>1.0.1</Version>
         <Authors>Kryptic by Theka.dev SINGLE MEMBER P.C.</Authors>
         <Copyright>Copyright (c) 2026 Kryptic by Theka.dev SINGLE MEMBER P.C.</Copyright>
         <Description>Kryptic daemon client for .NET. Passively injects development secrets from the local Kryptic daemon into IConfiguration and environment variables. No-op outside Development.</Description>
