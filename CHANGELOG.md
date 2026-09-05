@@ -5,6 +5,6 @@ the GitHub Release.
 
 ## Unreleased
 
-## 0.1.3
+## 1.0.0
 
-Initial public release.
+First production release.
