@@ -25,13 +25,10 @@ Protocol details: [Kryptic.Daemon/PROTOCOL.md](https://github.com/dev-kryptic/Kr
 
 ## Releasing
 
-A merge to `main` is the release. The publish workflow commits the version bump as
-the Kryptic Release Bot, publishes to NuGet, tags `vX.Y.Z`, and opens a
-GitHub Release using the matching section in [CHANGELOG.md](CHANGELOG.md).
-
-Leave release-worthy notes under **Unreleased**. The publish workflow creates
-the `## X.Y.Z` section from that body if it is missing (or a one-line fallback)
-and commits it.
+Merges to `main` run tests only. Publish by pushing a `vX.Y.Z` tag (or
+re-running the workflow with that tag). The tag is the version. Leave
+release-worthy notes under **Unreleased**. The publish job creates the
+`## X.Y.Z` section from that body if it is missing (or a one-line fallback).
 
 ## Licensing of contributions
 
